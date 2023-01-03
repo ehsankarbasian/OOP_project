@@ -5,5 +5,5 @@ path = str(pathlib.Path(__file__).parent.parent.absolute())
 sys.path.append(path)
 
 
-class User:
+class Route:
     pass

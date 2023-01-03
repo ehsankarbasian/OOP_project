@@ -1,0 +1,1 @@
+from src.navigation.navigator import OnWalkNavigator, OnRideNavigator
