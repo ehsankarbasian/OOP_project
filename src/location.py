@@ -6,12 +6,31 @@ sys.path.append(path)
 
 
 class GeneralLocation:
-    pass
+    
+    def __init__(self, longitude, latitude, name):
+        self.longitude = longitude
+        self.latitude = latitude
+        self.name = name
 
 
 class PrivateLocation(GeneralLocation):
-    pass
+    
+    def __init__(self, longitude, latitude, name, user):
+        self.user = user
+        super().__init__(longitude, latitude, name)
+    
+    def __str__(self):
+        pass
 
 
 class MapLocation(GeneralLocation):
-    pass
+    
+    def __init__(self, longitude, latitude, name, location_type, rates, phone=None, info=None):
+        self.type = location_type
+        self.rates = rates
+        self.__phone = phone
+        self.__info = info
+        super().__init__(longitude, latitude, name)
+    
+    def __str__(self):
+        pass

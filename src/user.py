@@ -6,4 +6,8 @@ sys.path.append(path)
 
 
 class User:
-    pass
+    
+    def __init__(self, username, password, locations):
+        self.username = username
+        self.__password = password
+        self.favourite_locations = locations

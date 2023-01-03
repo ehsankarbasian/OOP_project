@@ -6,4 +6,6 @@ sys.path.append(path)
 
 
 class Route:
-    pass
+    
+    def __init__(self, route):
+        self.route = route
