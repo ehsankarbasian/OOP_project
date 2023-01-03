@@ -7,20 +7,31 @@ sys.path.append(path)
 
 
 class DistanceCalculatorInterface(ABC):
-    pass
+    
+    @abstractmethod
+    def calculate_distance(self, location_1, location_2):
+        pass
 
 
 class OnWalkDistanceCalculator(DistanceCalculatorInterface):
-    pass
+    
+    def calculate_distance(self, location_1, location_2):
+        pass
 
 
 class OnRideDistanceCalculator(DistanceCalculatorInterface):
-    pass
+    
+    def calculate_distance(self, location_1, location_2):
+        pass
 
 
 class EucildeanDistanceCalculator:
-    pass
+    
+    def calculate_distance(self, location_1, locaton_2):
+        pass
 
 
 class BFSIterator:
-    pass
+    
+    def iterate_next_step(self, graph):
+        pass

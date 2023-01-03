@@ -9,12 +9,25 @@ from src.navigation.distance import OnWalkDistanceCalculator, OnRideDistanceCalc
 
 
 class NavigatorInterface(ABC):
-    pass
+    
+    @abstractmethod
+    def navigate(self, source, destination):
+        pass
 
 
 class OnRideNavigator(NavigatorInterface):
-    pass
+    
+    def __init__(self):
+        self.__distanceCalculator = OnRideDistanceCalculator()
+    
+    def navigate(self, source, destination):
+        pass
 
 
 class OnWalkNavigator(NavigatorInterface):
-    pass
+    
+    def __init__(self):
+        self.__distanceCalculator = OnWalkDistanceCalculator()
+    
+    def navigate(self, source, destination):
+        pass
