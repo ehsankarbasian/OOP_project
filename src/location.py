@@ -20,7 +20,7 @@ class PrivateLocation(GeneralLocation):
         super().__init__(longitude, latitude, name)
     
     def __str__(self):
-        pass
+        return f'{self.name}'
 
 
 class MapLocation(GeneralLocation):
@@ -33,4 +33,4 @@ class MapLocation(GeneralLocation):
         super().__init__(longitude, latitude, name)
     
     def __str__(self):
-        pass
+        return f'{self.type} {self.name}'

@@ -21,7 +21,7 @@ class OnRideNavigator(NavigatorInterface):
         self.__distanceCalculator = OnRideDistanceCalculator()
     
     def navigate(self, source, destination):
-        pass
+        return list()
 
 
 class OnWalkNavigator(NavigatorInterface):
@@ -30,4 +30,4 @@ class OnWalkNavigator(NavigatorInterface):
         self.__distanceCalculator = OnWalkDistanceCalculator()
     
     def navigate(self, source, destination):
-        pass
+        return list()
