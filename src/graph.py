@@ -37,6 +37,8 @@ class Graph:
         return result
     
     def __print_all_paths_util(self, u, d, visited, path):
+        # u = u.name
+        # d = d.name
         visited[u]= True
         path.append(u)
         if u == d:

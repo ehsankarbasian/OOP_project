@@ -21,14 +21,14 @@ class OnRideNavigator(NavigatorInterface):
         self.__distanceCalculator = OnRideDistanceCalculator()
     
     def navigate(self, graph, source, destination):
-        pathes = graph.get_all_paths(source, destination)
+        pathes = graph.get_all_paths(source.name, destination.name)
         result = list()
         for path in pathes:
             weight = path['weight']
             route = path['path']
             result.append({'route': route, 'cost': weight})
         
-        min_distance = self.__distanceCalculator.calculate_distance(graph, source, destination)
+        min_distance = self.__distanceCalculator.calculate_distance(graph, source.name, destination.name)
         # TODO: sort result by distance or use only min_distance
         return result
 
@@ -39,5 +39,5 @@ class OnWalkNavigator(NavigatorInterface):
         self.__distanceCalculator = OnWalkDistanceCalculator()
     
     def navigate(self, graph, source, destination):
-        distance = self.__distanceCalculator.calculate_distance(source, destination)
+        distance = self.__distanceCalculator.calculate_distance(graph, source, destination)
         return [{'route': [source, destination], 'cost': distance}]
