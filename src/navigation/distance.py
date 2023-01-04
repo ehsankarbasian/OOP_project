@@ -45,5 +45,5 @@ class EucildeanDistanceCalculator:
 
 class BFSIterator:
     
-    def iterate_next_step(self, graph, destination):
+    def iterate_next_step(self, graph, sources, destination):
         return graph, True
