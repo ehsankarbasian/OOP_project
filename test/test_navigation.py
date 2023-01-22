@@ -159,19 +159,98 @@ class OnRideDistanceCalculatorTestCase(TestCase):
 
 
 class OnWalkNavigatorTestCase(TestCase):
+    SRC_NAME = 'IUST'
+    DST_NAME = 'AmirKabir'
     
-    # @mock.patch('src.my_code.DataSaver._DataSaver__TO_PRINT', 'mocked in test')
-    # @mock.patch.object(OnWalkNavigator, '_DataSaver__prv_func', return_value='returned in mocked test')
-    def test_mock_variable_works(self):
-        pass
+    def setUp(self):
+        self.navigator = OnWalkNavigator()
+        self.graph = MockGraph()
+        self.location_1 = BaseObject()
+        self.location_2 = BaseObject()
+        self.location_1.__setattr__('name', self.SRC_NAME)
+        self.location_2.__setattr__('name', self.DST_NAME)
+    
+    def tearDown(self):
+        del self.navigator
+        del self.graph
+        del self.location_1
+        del self.location_2
+    
+    def test_navigate_result(self):
+        self.location_1.__setattr__('longitude', 4)
+        self.location_1.__setattr__('latitude', -2)
+        self.location_2.__setattr__('longitude', 1)
+        self.location_2.__setattr__('latitude', 2)
+        distance = OnWalkNavigator().navigate(self.graph, self.location_1, self.location_2)
+        expected_distance = [{'distance': 5, 'path': [self.location_1, self.location_2]}]
+        self.assertEqual(distance[0]['path'], expected_distance[0]['path'])
+        self.assertTrue('distance' in list(distance[0].keys()))
+    
+    def test_calculate_distances_called_correctly(self):
+        self.navigator._OnWalkNavigator__distanceCalculator = mock.MagicMock()
+        self.navigator.navigate(self.graph, self.location_1, self.location_2)
+        self.navigator._OnWalkNavigator__distanceCalculator.calculate_distances.assert_called_once_with(self.graph, self.location_1, self.location_2)
+    
+    def test_distance_result_correctly_returned(self):
+        self.navigator._OnWalkNavigator__distanceCalculator = mock.MagicMock()
+        self.navigator._OnWalkNavigator__distanceCalculator.calculate_distances.return_value = [{'distance': 8}, {'distance': 10}]
+        distance = self.navigator.navigate(self.graph, self.location_1, self.location_2)
+        expected_distance = [{'distance': 8, 'path': [self.location_1, self.location_2]}]
+        self.assertEqual(distance, expected_distance)
 
 
 class OnRideNavigatorTestCase(TestCase):
+    SRC_NAME = 'AzadiSq'
+    DST_NAME = 'IUST'
     
-    # @mock.patch('src.my_code.DataSaver._DataSaver__TO_PRINT', 'mocked in test')
-    # @mock.patch.object(OnRideNavigator, '_DataSaver__prv_func', return_value='returned in mocked test')
-    def test_mock_variable_works(self):
-        pass
+    def setUp(self):
+        self.navigator = OnRideNavigator(max_path_count=2)
+        self.graph = MockGraph()
+        self.location_1 = BaseObject()
+        self.location_2 = BaseObject()
+        self.location_1.__setattr__('name', self.SRC_NAME)
+        self.location_2.__setattr__('name', self.DST_NAME)
+    
+    def tearDown(self):
+        del self.navigator
+        del self.graph
+        del self.location_1
+        del self.location_2
+    
+    def test_navigate_result(self):
+        distances = self.navigator.navigate(self.graph, self.location_1, self.location_2)
+        expected_distances = [
+            {'distance': 19, 'path': [self.SRC_NAME, 'tehran_university', self.DST_NAME]},
+            {'distance': 20, 'path': [self.SRC_NAME, 'tehran_university', 'resalat_sq', self.DST_NAME]}]
+        self.assertEqual(distances, expected_distances)
+    
+    def test_calculate_distances_called_correctly(self):
+        self.navigator._OnRideNavigator__distanceCalculator = mock.MagicMock()
+        self.navigator.navigate(self.graph, self.location_1, self.location_2)
+        self.navigator._OnRideNavigator__distanceCalculator.calculate_distances.assert_called_once_with(self.graph, self.location_1, self.location_2)
+    
+    def test_distance_result_correctly_returned(self):
+        self.navigator._OnRideNavigator__distanceCalculator = mock.MagicMock()
+        all_pathes = self.graph.get_all_paths(self.SRC_NAME, self.DST_NAME)
+        self.navigator._OnRideNavigator__distanceCalculator.calculate_distances.return_value = all_pathes
+        distances = self.navigator.navigate(self.graph, self.location_1, self.location_2)
+        expected_distances = [{'distance': 19, 'path': ['AzadiSq', 'tehran_university', 'IUST']}, {'distance': 20, 'path': ['AzadiSq', 'tehran_university', 'resalat_sq', 'IUST']}]
+        self.assertEqual(distances, expected_distances)
+    
+    def test_get_normalizer_max_path_count_by_input(self):
+        navigator = OnRideNavigator(4)
+        distance = navigator._OnRideNavigator__get_normalized_max_path_count(2)
+        self.assertEqual(distance, 2)
+    
+    def test_get_normalizer_max_path_count_by_default(self):
+        navigator = OnRideNavigator(4)
+        distance = navigator._OnRideNavigator__get_normalized_max_path_count(6)
+        self.assertEqual(distance, 4)
+    
+    def test_get_normalizer_max_path_count_equel(self):
+        navigator = OnRideNavigator(max_path_count=5)
+        distance = navigator._OnRideNavigator__get_normalized_max_path_count(5)
+        self.assertEqual(distance, 5)
     
     
 if __name__=='__main__':

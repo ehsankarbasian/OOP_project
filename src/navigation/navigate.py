@@ -17,11 +17,11 @@ class NavigatorInterface(ABC):
 
 class OnRideNavigator(NavigatorInterface):
     __DEFAULT_MAX_PATH_COUNT = 3
+    __distanceCalculator = OnRideDistanceCalculator()
     
     # TODO(refactor): change all weights to distance
     
     def __init__(self, max_path_count=__DEFAULT_MAX_PATH_COUNT):
-        self.__distanceCalculator = OnRideDistanceCalculator()
         self.__max_path_count = max_path_count
     
     def navigate(self, graph, source, destination):
@@ -35,9 +35,7 @@ class OnRideNavigator(NavigatorInterface):
 
 
 class OnWalkNavigator(NavigatorInterface):
-    
-    def __init__(self):
-        self.__distanceCalculator = OnWalkDistanceCalculator()
+    __distanceCalculator = OnWalkDistanceCalculator()
     
     def navigate(self, graph, source, destination):
         distances = self.__distanceCalculator.calculate_distances(graph, source, destination)
