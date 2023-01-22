@@ -1,0 +1,178 @@
+from unittest import TestCase
+import unittest
+import mock
+
+import pathlib
+import sys
+path = str(pathlib.Path(__file__).parent.parent.absolute())
+sys.path.append(path)
+
+from src.navigation.distance import OnWalkDistanceCalculator, OnRideDistanceCalculator
+from src.navigation.navigate import OnWalkNavigator, OnRideNavigator
+
+from mock_classes import BaseObject, MockGraph
+
+
+class OnWalkDistanceCalculatorTestCase(TestCase):
+    
+    def setUp(self):
+        self.location_1 = BaseObject()
+        self.location_2 = BaseObject()
+    
+    def tearDown(self):
+        del self.location_1
+        del self.location_2
+    
+    @mock.patch.object(OnWalkDistanceCalculator, '_OnWalkDistanceCalculator__calculate_pythagoras_distance', return_value=15)
+    def test_calculate_distances_result(self, mocked_calculate_pythagoras_distance):
+        src_name = 'IUST'
+        dst_name = 'AmirKabir'
+        self.location_1.__setattr__('name', src_name)
+        self.location_2.__setattr__('name', dst_name)
+        distance = OnWalkDistanceCalculator().calculate_distances(graph=None,
+                                                                  location_1=self.location_1,
+                                                                  location_2=self.location_2)
+        expected = [{'distance': 15, 'path': [src_name, dst_name]}]
+        self.assertEqual(distance, expected)
+    
+    @mock.patch.object(OnWalkDistanceCalculator, '_OnWalkDistanceCalculator__calculate_pythagoras_distance', return_value=15)
+    def test_calculate_distances_called_pythagoras_distance_function_correctly(self, mocked_calculate_pythagoras_distance):
+        src_name = 'IUST'
+        dst_name = 'AmirKabir'
+        self.location_1.__setattr__('name', src_name)
+        self.location_2.__setattr__('name', dst_name)
+        OnWalkDistanceCalculator().calculate_distances(graph=None,
+                                                       location_1=self.location_1,
+                                                       location_2=self.location_2)
+        mocked_calculate_pythagoras_distance.assert_called_once_with(self.location_1, self.location_2)
+        
+    def test_calculate_pythagoras_distance_from_coordinate_origin(self):
+        self.location_1.__setattr__('longitude', 0)
+        self.location_1.__setattr__('latitude', 0)
+        self.location_2.__setattr__('longitude', 5)
+        self.location_2.__setattr__('latitude', 12)
+        
+        distance = OnWalkDistanceCalculator._OnWalkDistanceCalculator__calculate_pythagoras_distance(self.location_1, self.location_2)
+        self.assertEqual(distance, 13)
+    
+    def test_calculate_pythagoras_distance_is_removable(self):
+        self.location_1.__setattr__('longitude', 0)
+        self.location_1.__setattr__('latitude', 0)
+        self.location_2.__setattr__('longitude', 5)
+        self.location_2.__setattr__('latitude', 12)
+        
+        distance_1 = OnWalkDistanceCalculator._OnWalkDistanceCalculator__calculate_pythagoras_distance(self.location_1, self.location_2)
+        distance_2 = OnWalkDistanceCalculator._OnWalkDistanceCalculator__calculate_pythagoras_distance(self.location_2, self.location_1)
+        self.assertEqual(distance_1, distance_2)
+    
+    def test_calculate_pythagoras_distance_is_zero(self):
+        self.location_2.__setattr__('longitude', 5)
+        self.location_2.__setattr__('latitude', 12)
+        
+        distance = OnWalkDistanceCalculator._OnWalkDistanceCalculator__calculate_pythagoras_distance(self.location_2, self.location_2)
+        self.assertEqual(distance, 0)
+    
+    def test_calculate_pythagoras_distance_with_negative_coordinates(self):
+        self.location_1.__setattr__('longitude', -2)
+        self.location_1.__setattr__('latitude', -3)
+        self.location_2.__setattr__('longitude', 1)
+        self.location_2.__setattr__('latitude', -7)
+        
+        distance = OnWalkDistanceCalculator._OnWalkDistanceCalculator__calculate_pythagoras_distance(self.location_1, self.location_2)
+        self.assertEqual(distance, 5)
+    
+    def test_calculate_pythagoras_distance_with_decimal_coordinates(self):
+        self.location_1.__setattr__('longitude', 1.5)
+        self.location_1.__setattr__('latitude', 0)
+        self.location_2.__setattr__('longitude', 0)
+        self.location_2.__setattr__('latitude', 2)
+        
+        distance = OnWalkDistanceCalculator._OnWalkDistanceCalculator__calculate_pythagoras_distance(self.location_1, self.location_2)
+        self.assertEqual(distance, 2.5)
+    
+    def test_calculate_pythagoras_distance_with_dumb_coordinates(self):
+        self.location_1.__setattr__('longitude', 17)
+        self.location_1.__setattr__('latitude', 3)
+        self.location_2.__setattr__('longitude', 0)
+        self.location_2.__setattr__('latitude', 14)
+        
+        distance = OnWalkDistanceCalculator._OnWalkDistanceCalculator__calculate_pythagoras_distance(self.location_1, self.location_2)
+        self.assertEqual(distance, (17**2+11**2)**(1/2))
+
+
+class OnRideDistanceCalculatorTestCase(TestCase):
+    SRC_NAME = 'IUST'
+    DST_NAME = 'AmirKabir'
+    
+    def setUp(self):
+        self.graph = MockGraph()
+        self.location_1 = BaseObject()
+        self.location_2 = BaseObject()
+        self.location_1.__setattr__('name', self.SRC_NAME)
+        self.location_2.__setattr__('name', self.DST_NAME)
+    
+    def tearDown(self):
+        del self.graph
+        del self.location_1
+        del self.location_2
+    
+    @mock.patch.object(OnRideDistanceCalculator, '_OnRideDistanceCalculator__sort_pathes_by_distance', return_value='mocked_sorted_output')
+    def test_calculate_distances_result(self, mocked_sort):
+        distances = OnRideDistanceCalculator().calculate_distances(graph=self.graph,
+                                                                  location_1=self.location_1,
+                                                                  location_2=self.location_2)
+        self.assertEqual(distances, 'mocked_sorted_output')
+    
+    @mock.patch.object(OnRideDistanceCalculator, '_OnRideDistanceCalculator__sort_pathes_by_distance', return_value='mocked_sorted_output')
+    def test_calculate_distances_called_graph_get_all_paths_correctly(self, mocked_sort):
+        self.graph.get_all_paths = mock.MagicMock(return_value="mocked!")
+        OnRideDistanceCalculator().calculate_distances(graph=self.graph,
+                                                       location_1=self.location_1,
+                                                       location_2=self.location_2)
+        self.graph.get_all_paths.assert_called_once_with(self.SRC_NAME, self.DST_NAME)
+    
+    @mock.patch.object(OnRideDistanceCalculator, '_OnRideDistanceCalculator__sort_pathes_by_distance', return_value='mocked_sorted_output')
+    def test_calculate_distances_called_sort_pathes_by_distance_correctly(self, mocked_sort):
+        OnRideDistanceCalculator().calculate_distances(graph=self.graph,
+                                                       location_1=self.location_1,
+                                                       location_2=self.location_2)
+        graph_pathes = self.graph.get_all_paths(self.SRC_NAME, self.DST_NAME)
+        mocked_sort.assert_called_once_with(graph_pathes)
+    
+    def test_sort_pathes_by_distance(self):
+        pathes = [
+            {'distance': 7, 'path': '1 2 7 5'},
+            {'distance': 13, 'path': '1 2 7 8 4 5'},
+            {'distance': 2, 'path': '1 5'},
+            {'distance': 10, 'path': '1 8 4 5'},
+            {'distance': 5, 'path': '1 6 5'}
+        ]
+        expected_sorted_pathes = [
+            {'distance': 2, 'path': '1 5'},
+            {'distance': 5, 'path': '1 6 5'},
+            {'distance': 7, 'path': '1 2 7 5'},
+            {'distance': 10, 'path': '1 8 4 5'},
+            {'distance': 13, 'path': '1 2 7 8 4 5'}
+        ]
+        sorted_pathes = OnRideDistanceCalculator._OnRideDistanceCalculator__sort_pathes_by_distance(pathes)
+        self.assertEqual(sorted_pathes, expected_sorted_pathes)
+
+
+class OnWalkNavigatorTestCase(TestCase):
+    
+    # @mock.patch('src.my_code.DataSaver._DataSaver__TO_PRINT', 'mocked in test')
+    # @mock.patch.object(OnWalkNavigator, '_DataSaver__prv_func', return_value='returned in mocked test')
+    def test_mock_variable_works(self):
+        pass
+
+
+class OnRideNavigatorTestCase(TestCase):
+    
+    # @mock.patch('src.my_code.DataSaver._DataSaver__TO_PRINT', 'mocked in test')
+    # @mock.patch.object(OnRideNavigator, '_DataSaver__prv_func', return_value='returned in mocked test')
+    def test_mock_variable_works(self):
+        pass
+    
+    
+if __name__=='__main__':
+    unittest.main()

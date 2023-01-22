@@ -25,12 +25,12 @@ class Graph:
     def get_graph(self):
         return self.__graph
     
-    def get_all_paths(self, s, d):
+    def get_all_paths(self, source_name, destination_name):
         self.graph = self.__get_not_weigted_graph()
         visited = {k: False for k in list(self.graph.keys())}
         self.__paths = list()
         path = []
-        self.__print_all_paths_util(s, d, visited, path)
+        self.__print_all_paths_util(source_name, destination_name, visited, path)
         pathes = self.__save_path_weights()
         return pathes
     

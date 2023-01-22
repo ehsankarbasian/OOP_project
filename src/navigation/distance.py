@@ -32,8 +32,8 @@ class OnRideDistanceCalculator(DistanceCalculatorInterface):
     
     def calculate_distances(self, graph, location_1, location_2):
         pathes = graph.get_all_paths(location_1.name, location_2.name)
-        serted_pathes = self.__sort_pathes_by_distance(pathes)
-        return serted_pathes
+        sorted_pathes = self.__sort_pathes_by_distance(pathes)
+        return sorted_pathes
     
     @staticmethod
     def __sort_pathes_by_distance(pathes):
