@@ -9,28 +9,32 @@ sys.path.append(path)
 class DistanceCalculatorInterface(ABC):
     
     @abstractmethod
-    def calculate_distance(self, graph, location_1, location_2):
+    def calculate_distances(self, graph, location_1, location_2):
         pass
 
 
 class OnWalkDistanceCalculator(DistanceCalculatorInterface):
     
-    def calculate_distance(self, graph, location_1, location_2):
-        a2 = (location_1.longitude - location_2.longitude) ** 2
-        b2 = (location_1.latitude - location_2.latitude) ** 2
+    def calculate_distances(self, graph, location_1, location_2):
+        distance = self.__calculate_pythagoras_distance(location_1, location_2)
+        return [{'distance': distance, 'path': [location_1.name, location_2.name]}]
+    
+    @staticmethod
+    def __calculate_pythagoras_distance(location_src, location_dst):
+        a2 = (location_src.longitude - location_dst.longitude) ** 2
+        b2 = (location_src.latitude - location_dst.latitude) ** 2
         c2 = a2 + b2
-        distance = c2 ** (1/2)
-        return distance
+        pythagoras_distance = c2 ** (1/2)
+        return pythagoras_distance
 
 
 class OnRideDistanceCalculator(DistanceCalculatorInterface):
     
-    def calculate_distance(self, graph, location_1, location_2):
-        pathes = graph.get_all_paths(location_1, location_2)
-        min_distance = None
-        for path in pathes:
-            weight = path['weight']
-            if min_distance is None or weight < min_distance:
-                min_distance = weight
-        
-        return min_distance
+    def calculate_distances(self, graph, location_1, location_2):
+        pathes = graph.get_all_paths(location_1.name, location_2.name)
+        serted_pathes = self.__sort_pathes_by_distance(pathes)
+        return serted_pathes
+    
+    @staticmethod
+    def __sort_pathes_by_distance(pathes):
+        return sorted(pathes, key=lambda x: x['distance'])

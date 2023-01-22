@@ -16,21 +16,20 @@ class NavigatorInterface(ABC):
 
 
 class OnRideNavigator(NavigatorInterface):
+    # TODO(refactor): change all weights to distance
     
-    def __init__(self):
+    def __init__(self, max_path_count=3):
         self.__distanceCalculator = OnRideDistanceCalculator()
+        self.__max_path_count = max_path_count
     
     def navigate(self, graph, source, destination):
-        pathes = graph.get_all_paths(source.name, destination.name)
-        result = list()
-        for path in pathes:
-            weight = path['weight']
-            route = path['path']
-            result.append({'route': route, 'cost': weight})
-        
-        min_distance = self.__distanceCalculator.calculate_distance(graph, source.name, destination.name)
-        # TODO: sort result by distance or use only min_distance
-        return result
+        distances = self.__distanceCalculator.calculate_distances(graph, source, destination)
+        all_path_count = len(distances)
+        limited_distances = distances[:self.__get_normalized_max_path_count(all_path_count)]
+        return limited_distances
+    
+    def __get_normalized_max_path_count(self, all_path_count):
+        return min(self.__max_path_count, all_path_count)
 
 
 class OnWalkNavigator(NavigatorInterface):
@@ -39,5 +38,6 @@ class OnWalkNavigator(NavigatorInterface):
         self.__distanceCalculator = OnWalkDistanceCalculator()
     
     def navigate(self, graph, source, destination):
-        distance = self.__distanceCalculator.calculate_distance(graph, source, destination)
-        return [{'route': [source, destination], 'cost': distance}]
+        distances = self.__distanceCalculator.calculate_distances(graph, source, destination)
+        distance = distances[0]['distance']
+        return [{'distance': distance, 'path': [source, destination]}]

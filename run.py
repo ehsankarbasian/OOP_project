@@ -56,5 +56,5 @@ context_2 = Context(navigator=onRideNavigator, user=user_2, locations=locations_
 
 routes_1 = context_1.navigate(map_location_1, map_location_4)
 routes_2 = context_2.navigate(map_location_1, map_location_4)
-print(routes_1[0]['cost'])
 print(json.dumps(routes_2, sort_keys=True, indent=4))
+print(routes_1[0]['distance'])
