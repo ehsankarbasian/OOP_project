@@ -8,19 +8,21 @@ sys.path.append(path)
 class GeneralLocation:
     
     def __init__(self, longitude, latitude, name):
-        self.longitude = longitude
-        self.latitude = latitude
-        self.name = name
-
-
-class PrivateLocation(GeneralLocation):
+        self.__longitude = longitude
+        self.__latitude = latitude
+        self.__name = name
     
-    def __init__(self, longitude, latitude, name, user):
-        self.user = user
-        super().__init__(longitude, latitude, name)
+    @property
+    def longitude(self):
+        return self.__longitude
     
-    def __str__(self):
-        return f'{self.name}'
+    @property
+    def latitude(self):
+        return self.__latitude
+    
+    @property
+    def name(self):
+        return self.__name
 
 
 class MapLocation(GeneralLocation):
@@ -50,3 +52,17 @@ class MapLocation(GeneralLocation):
     
     def __str__(self):
         return f'{self.type} {self.name}'
+
+
+class PrivateLocation(GeneralLocation):
+    
+    def __init__(self, longitude, latitude, name, user):
+        self.__user = user
+        super().__init__(longitude, latitude, name)
+    
+    @property
+    def user(self):
+        return self.__user
+    
+    def __str__(self):
+        return f'{self.name}'
