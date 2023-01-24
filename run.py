@@ -55,8 +55,8 @@ graph_2.add_node(private_location_2.name)
 graph_2.add_edge(private_location_2.name, 'amir_kabir_university', edge_weight=2)
 graph_2.add_edge('tehran_university', private_location_1.name, edge_weight=1)
 
-context_1 = Context(navigator=onWalkNavigator, user=user_1, locations=locations_1, graph=graph_1)
-context_2 = Context(navigator=onRideNavigator, user=user_2, locations=locations_2, graph=graph_2)
+context_1 = Context(navigator=onWalkNavigator, user=user_1, locations=locations_1, graph=graph_1, user_password='pwd_1')
+context_2 = Context(navigator=onRideNavigator, user=user_2, locations=locations_2, graph=graph_2, user_password='pwd_2')
 
 
 ##############################################################################################################
