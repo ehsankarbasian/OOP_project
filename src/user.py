@@ -7,7 +7,12 @@ sys.path.append(path)
 
 class User:
     
-    def __init__(self, username, password, favourite_locations):
+    def __init__(self, username, password):
         self.username = username
         self.__password = password
-        self.favourite_locations = favourite_locations
+        self.favourite_locations = []
+        self.__spicial_permissions = ['_MapLocation__phone']
+    
+    @property
+    def special_permissions(self):
+        return self.__spicial_permissions

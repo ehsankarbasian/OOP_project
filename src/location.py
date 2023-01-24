@@ -25,12 +25,24 @@ class PrivateLocation(GeneralLocation):
 
 class MapLocation(GeneralLocation):
     
-    def __init__(self, longitude, latitude, name, location_type, rates, phone=None, info=None):
+    def __init__(self, longitude, latitude, name, location_type, phone=None, info=None):
         self.type = location_type
-        self.rates = rates
         self.__phone = phone
         self.__info = info
+        self.__rates = []
         super().__init__(longitude, latitude, name)
+    
+    def rate_location(self, rate):
+        if rate.user not in self.rated_users:
+            self.__rates.append(rate)
+    
+    @property
+    def rates(self):
+        return self.__rates
+    
+    @property
+    def rated_users(self):
+        return [rate.user for rate in self.__rates]
     
     def __str__(self):
         return f'{self.type} {self.name}'

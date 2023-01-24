@@ -29,17 +29,17 @@ graph.add_edge('IUST', 'amirkabir_university', edge_weight=11)
 onWalkNavigator = OnWalkNavigator()
 onRideNavigator = OnRideNavigator()
 
-map_location_1 = MapLocation(2, 5, name='azadi_sq', location_type='square', rates=[])
-map_location_2 = MapLocation(7, 18, name='tehran_university',  location_type='university', rates=[])
-map_location_3 = MapLocation(21, 45, name='amirkabir_university',  location_type='university', rates=[])
-map_location_4 = MapLocation(12, 19, name='IUST',  location_type='university', rates=[])
-map_location_5 = MapLocation(0, 13, name='resalat_sq', location_type='square', rates=[])
+map_location_1 = MapLocation(2, 5, name='azadi_sq', location_type='square')
+map_location_2 = MapLocation(7, 18, name='tehran_university',  location_type='university')
+map_location_3 = MapLocation(21, 45, name='amirkabir_university',  location_type='university')
+map_location_4 = MapLocation(12, 19, name='IUST',  location_type='university')
+map_location_5 = MapLocation(0, 13, name='resalat_sq', location_type='square')
 
 
-user_1 = User(username='user_1', password='pwd_1', favourite_locations=[])
-user_2 = User(username='user_2', password='pwd_2', favourite_locations=[])
+user_1 = User(username='user_1', password='pwd_1')
+user_2 = User(username='user_2', password='pwd_2')
 
-private_location_1 = PrivateLocation(15, 11, name='imamhossein_sq', user=user_1)
+private_location_1 = PrivateLocation(15, 11, name='__my_house__', user=user_1)
 private_location_2 = PrivateLocation(7, 23, name='home', user=user_2)
 
 locations_1 = [map_location_1, map_location_2, map_location_3, map_location_4, map_location_5, private_location_1]
@@ -59,33 +59,45 @@ context_1 = Context(navigator=onWalkNavigator, user=user_1, locations=locations_
 context_2 = Context(navigator=onRideNavigator, user=user_2, locations=locations_2, graph=graph_2)
 
 
+##############################################################################################################
 # Call context functionalities:
 
 # امکان تعریف مکان جدید در نقشه
-context_1.add_new_map_location()
+new_map_location_1 = MapLocation(8, 42, name='Milad Tower', location_type='building')
+new_map_location_2 = MapLocation(6, 37, name='Central Bank', location_type='building')
+context_1.add_new_location(new_map_location_1)
+context_1.add_new_location(new_map_location_2)
 
 # امکان علامت گذاری مکانی در نقشه
-context_1.add_new_private_location()
+context_1.add_new_private_location(9, 33, name='the company')
 
 # سرچ کردن بدنبال یک مکان با اسم آن
-context_1.search_location_by_name()
+result_1 = context_1.search_location_by_name('milad tower')
+result_2 = context_1.search_location_by_name('MI')
 
 # مسیریابی از نقطه ای به نقطه ی دیگر بصورت مسیر پیاده رو
 routes_1 = context_1.navigate(map_location_1, map_location_4)
-print(routes_1[0]['distance'])
+distance = routes_1[0]['distance']
 
 # مسیریابی از نقطه ای به نقطه ی دیگر بصورت مسیر ماشین رو
 routes_2 = context_2.navigate(map_location_1, map_location_4)
-print(json.dumps(routes_2, sort_keys=True, indent=4))
 
 # پیدا کردن نزدیک ترین نوع از یک مکان
-context_1.find_the_nearest_location_by_type()
+the_nearest_location = context_1.find_the_nearest_location_by_type(7, 38, location_type='building')
 
 # دیدن جزییات مکان توسط کاربر
-context_1.get_location_info()
+info_1 = context_1.get_location_info(map_location_4)
+info_2 = context_1.get_location_info(private_location_1)
+info_3 = context_1.get_location_info(private_location_2)
+info_4 = context_1.get_location_info('spam input')
 
 # فیوریت کردن یک مکان خاص روی نقشه
-context_1.make_location_favourite()
+context_1.make_location_favourite(map_location_3)
+context_1.make_location_favourite(new_map_location_1)
+context_1.make_location_favourite(private_location_1)
+context_1.make_location_favourite(private_location_2)
 
 # ریت دادن به یک مکان خاص از نقشه از طرف کاربر
-context_1.rate_location()
+context_1.rate_location(comment='nice place but expensive', score=4, location=new_map_location_1)
+context_1.rate_location(comment='great place', score=5, location=map_location_5)
+context_1.rate_location(comment='i love my house', score=5, location=private_location_1)
