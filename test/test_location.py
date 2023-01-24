@@ -1,6 +1,5 @@
 from unittest import TestCase
 import unittest
-import mock
 
 import pathlib
 import sys

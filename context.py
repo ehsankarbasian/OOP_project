@@ -18,6 +18,7 @@ class Context:
     
     def add_new_location(self, location):
         self.__locations.append(location)
+        self.__graph.add_node(location.name)
     
     def add_new_private_location(self, longitude, latitude, name):
         privateLocation = PrivateLocation(longitude, latitude, name, user=self.__user)
@@ -37,6 +38,8 @@ class Context:
     def find_the_nearest_location_by_type(self, longitude, latitude, location_type):
         locations = self.__filter_locations_by_type(location_type)
         distances = [((location.longitude-longitude)**2+(location.latitude-latitude)**2)**(1/2) for location in locations]
+        if len(distances) == 0:
+            return None
         nearest_location_index = distances.index(min(distances))
         return locations[nearest_location_index]
     
@@ -44,6 +47,11 @@ class Context:
         if isinstance(location, MapLocation):
             not_allowed_attrs = [attr for attr in dir(location) if attr.startswith('_') and attr not in self.__user.special_permissions]
             location_info = location.__dict__
+            location_info['longitude'] = location.longitude
+            location_info['latitude'] = location.latitude
+            location_info['name'] = location.name
+            location_info['type'] = location.type
+            location_info['rates'] = location.rates
             for not_allowed_attr in not_allowed_attrs:
                 try: location_info.__delitem__(not_allowed_attr)
                 except: pass
@@ -51,7 +59,12 @@ class Context:
         elif isinstance(location, PrivateLocation):
             the_same_user = bool(location.__getattribute__('user') == self.__user)
             if the_same_user:
-                return location.__dict__
+                location_info = location.__dict__
+                location_info['longitude'] = location.longitude
+                location_info['latitude'] = location.latitude
+                location_info['name'] = location.name
+                location_info['user'] = location.user
+                return location_info
         return dict({})
     
     def make_location_favourite(self, location):
@@ -68,6 +81,10 @@ class Context:
         if isinstance(location, MapLocation):
             rate = Rate(comment, score, self.__user)
             location.rate_location(rate)
+    
+    
+    def add_edge(self, source, destination, cost):
+        self.__graph.add_edge(source.name, destination.name, cost)
         
     
     @staticmethod
