@@ -19,8 +19,6 @@ class OnRideNavigator(NavigatorInterface):
     __DEFAULT_MAX_PATH_COUNT = 3
     __distanceCalculator = OnRideDistanceCalculator()
     
-    # TODO(refactor): change all weights to distance
-    
     def __init__(self, max_path_count=__DEFAULT_MAX_PATH_COUNT):
         self.__max_path_count = max_path_count
     

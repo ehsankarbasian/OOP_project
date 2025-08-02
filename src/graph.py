@@ -6,7 +6,6 @@ sys.path.append(path)
 
 
 class Graph:
-    # TODO(refactor): change all weights to distance
     
     def __init__(self):
         self.__graph = dict()
@@ -16,11 +15,10 @@ class Graph:
         if node_name not in self.__nodes:
             self.__graph[node_name] = list()
     
-    def add_edge(self, source_node_name, destination_node_name, edge_weight):
+    def add_edge(self, source_node_name, destination_node_name, edge_distance):
         nodes_exists = bool(source_node_name in self.__nodes and destination_node_name in self.__nodes)
-        allowed_edge_weight = bool(edge_weight > 0)
-        if nodes_exists and allowed_edge_weight:
-            self.__graph[source_node_name].append({'node': destination_node_name, 'distance': edge_weight})
+        if nodes_exists and edge_distance > 0:
+            self.__graph[source_node_name].append({'node': destination_node_name, 'distance': edge_distance})
     
     def get_edges_from_a_node(self, destination_node_name):
         return self.__graph.get(destination_node_name, list())
@@ -30,7 +28,7 @@ class Graph:
         return self.__graph
     
     def get_all_paths(self, source_name, destination_name):
-        self.graph = self.__get_not_weighted_graph()
+        self.graph = self.__get_unweighted_graph()
         visited = {k: False for k in self.__nodes}
         self.__paths = list()
         pathes = self.__get_all_paths(source_name, destination_name, visited)
@@ -40,7 +38,7 @@ class Graph:
     def __nodes(self):
         return list(self.__graph.keys())
     
-    def __get_not_weighted_graph(self):
+    def __get_unweighted_graph(self):
         result = dict()
         for u, v in self.__graph.items():
             if u not in list(result.keys()):
@@ -66,18 +64,18 @@ class Graph:
         
         weighted_pathes = list()
         for path in self.__paths:
-            weight = self.__get_path_weight(path)
-            weighted_pathes.append({'distance': weight, 'path': path})
+            distance = self.__get_path_distance(path)
+            weighted_pathes.append({'distance': distance, 'path': path})
         return weighted_pathes
     
-    def __get_path_weight(self, path):
-        path_weight = 0
+    def __get_path_distance(self, path):
+        path_distance = 0
         previous_node = path[0]
         for node in path[1:]:
             edges = self.__graph[previous_node]
             for e in edges:
                 if e['node'] == node:
-                    weight = e['distance']
-                    path_weight += weight
+                    distance = e['distance']
+                    path_distance += distance
             previous_node = node
-        return path_weight
+        return path_distance
